@@ -8,9 +8,9 @@ import android.widget.EditText
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var radioButton: RadioButton
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -33,18 +33,29 @@ class MainActivity : AppCompatActivity() {
 
         calcButton.setOnClickListener { view: View ->
             val selectedOption = radioButton.text.toString()
-            val first_num = firstText.text.toString().toFloat()
-            val second_num = secondText.text.toString().toFloat()
-
-            val result = when (selectedOption) {
-                "+" -> (first_num + second_num).toString()
-                "-" -> (first_num - second_num).toString()
-                "*" -> (first_num * second_num).toString()
-                "/" -> (first_num / second_num).toString()
-                "mod" -> (first_num % second_num).toString()
-                else -> "NAN"
+            try{
+                val first_num = firstText.text.toString().toFloat()
+                val second_num = secondText.text.toString().toFloat()
+                if (second_num == 0f) {
+                    if (selectedOption == "/")
+                        Snackbar.make(output, "You can't divide by 0!", Snackbar.LENGTH_SHORT).show()
+                    else if (selectedOption == "mod")
+                        Snackbar.make(output, "You can't modulo by 0!", Snackbar.LENGTH_SHORT).show()
+                }
+                val result = when (selectedOption) {
+                    "+" -> (first_num + second_num).toString()
+                    "-" -> (first_num - second_num).toString()
+                    "*" -> (first_num * second_num).toString()
+                    "/" -> (first_num / second_num).toString()
+                    "mod" -> (first_num % second_num).toString()
+                    else -> "NAN"
+                }
+                output.text = result
             }
-            output.text = result
+            catch (e: NumberFormatException) {
+                Snackbar.make(output, "Please enter numbers!", Snackbar.LENGTH_SHORT).show()
+
+            }
         }
     }
 }
